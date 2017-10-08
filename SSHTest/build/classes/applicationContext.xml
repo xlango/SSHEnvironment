@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd"
+		>
+
+  <util:properties id="dbconfig" location="classpath:jdbc_config.properties"> </util:properties>
+  <!-- CP30数据源 -->
+  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+  	<!-- 配置数据库URL -->
+  	<property name="jdbcUrl" value="#{dbconfig.jdbcUrl}"></property>
+  	<!-- 数据库驱动类 -->
+  	<property name="driverClass" value="#{dbconfig.driverClass}"></property>
+  	<!-- 数据库用户名 -->
+	<property name="user" value="#{dbconfig.username}"></property>
+  	<!-- 数据库密码 -->
+  	<property name="password" value="#{dbconfig.password}"></property>
+  	<!-- 可选属性 -->
+  	<!-- 数据库连接池最大连接数 -->
+  	<property name="maxPoolSize" value="30"></property>
+  	<!-- 初始化连接数 -->
+  	<!-- 系统启动后直接初始化几个连接 -->
+  	<property name="initialPoolSize" value="5"></property>
+  	
+  </bean>
+  <!-- spring与hibernate整合托管  托管hibernate配置 -->
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+  	<!-- 直接引用数据源 -->
+  	<property name="dataSource" ref="dataSource"></property>
+  	<!-- 直接配置hibernate本身属性 -->
+  	<property name="hibernateProperties">
+  		<props>
+  			<prop key="hibernate.show_sql">true</prop>
+  			<prop key="hibernate.format_sql">true</prop>
+  		</props>
+  	</property>
+  	<!-- 添加hibernate映射文件 -->
+  	<property name="mappingLocations">
+  		<array>
+  			<value>classpath:com/jkx/liqian/entity/User.hbm.xml</value>
+  		</array>
+  	</property>
+  
+  </bean>
+  <!-- 托管struts2的Action -->
+  <bean id="UserAction" class="com.jkx.liqian.action.UserAction" depends-on="userDao">
+  	<property name="userDao" ref="userDao"></property> 
+  </bean>
+
+  <!-- 托管UserDao -->
+<bean id="userDao" class="com.jkx.liqian.dao.UserDao">
+<property name="sessionFactory" ref="sessionFactory"></property>
+</bean>
+</beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"struts-2.3.dtd">
+<struts>
+<!-- 打开开发模式 -->
+<constant name="struts.devModel" value="true"></constant>
+<!-- 打开动态方法调用 -->
+<constant name="struts.enable.DynamicMethodInvocation" value="true"></constant>
+
+<!-- Action的对象工厂制定为spring托管(跟spring做了整合) -->
+<constant name="struts.objectfactory"  value="spring"></constant>
+
+<package name="default" namespace="/" extends="struts-default"></package>
+<!-- 非json类型的Action 作为前端控制器 -->
+<package name="user"  extends="default" namespace="/">
+<!-- 这里的class指的是springIOC容器中托管的Action -->
+<action name="login" class="UserAction" method="login" >
+	<result name="success">/home.jsp</result>
+	<result name="input">/index.jsp</result>
+</action>
+<action name="add" class="UserAction" method="add">
+	<result name="success">/index.jsp</result>
+</action>
+</package>
+</struts>
+
